@@ -31,6 +31,7 @@ export default function LookbookView() {
   const boxRef = useRef(null);
   const jumpRef = useRef(null);
   const stripRef = useRef(null);
+  const boxTl = useRef(null);
 
   useEffect(() => {
     if (!ready) return;
@@ -41,8 +42,10 @@ export default function LookbookView() {
   useEffect(() => {
     const box = boxRef.current;
     if (!box) return;
+    // Opening and closing must never run at the same time
+    boxTl.current?.kill();
     if (selected !== null) {
-      gsap
+      boxTl.current = gsap
         .timeline()
         .set(box, { pointerEvents: "auto" })
         .to(box.querySelector(".lb-veil"), { opacity: 1, duration: 0.4 })
@@ -54,7 +57,7 @@ export default function LookbookView() {
         )
         .fromTo(box.querySelectorAll(".lb-reveal"), { opacity: 0, y: 20 }, { opacity: 1, y: 0, stagger: 0.06 }, "-=0.5");
     } else {
-      gsap
+      boxTl.current = gsap
         .timeline()
         .to(box.querySelector(".lb-frame"), { clipPath: "inset(50% 50% 50% 50%)", duration: 0.5, ease: "power3.in" })
         .to(box.querySelector(".lb-veil"), { opacity: 0, duration: 0.3 })

@@ -232,7 +232,12 @@ export default function LookbookHelix({ images, onSelect, onChange, jumpRef, pau
       if (e.key === "Enter") callbacks.current.onSelect?.(Math.round(current / STEP));
     };
 
+    // A tap opens the lightbox on pointerup; the click the browser synthesises
+    // afterwards would land on the lightbox veil and close it again
+    const onTouchEnd = (e) => e.preventDefault();
+
     el.addEventListener("wheel", onWheel, { passive: false });
+    el.addEventListener("touchend", onTouchEnd, { passive: false });
     el.addEventListener("pointerdown", onDown);
     window.addEventListener("pointermove", onMove);
     window.addEventListener("pointerup", onUp);
@@ -298,6 +303,7 @@ export default function LookbookHelix({ images, onSelect, onChange, jumpRef, pau
       clearTimeout(idle);
       ro.disconnect();
       el.removeEventListener("wheel", onWheel);
+      el.removeEventListener("touchend", onTouchEnd);
       el.removeEventListener("pointerdown", onDown);
       window.removeEventListener("pointermove", onMove);
       window.removeEventListener("pointerup", onUp);
